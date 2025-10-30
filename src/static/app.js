@@ -554,6 +554,23 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("")}
         </ul>
       </div>
+      <div class="social-sharing">
+        <div class="share-label">Share this activity:</div>
+        <div class="share-buttons">
+          <button class="share-btn facebook-share" data-activity="${name}" data-description="${details.description}" data-schedule="${formattedSchedule}" title="Share on Facebook">
+            <span class="share-icon">📘</span>
+          </button>
+          <button class="share-btn twitter-share" data-activity="${name}" data-description="${details.description}" data-schedule="${formattedSchedule}" title="Share on X (Twitter)">
+            <span class="share-icon">🐦</span>
+          </button>
+          <button class="share-btn email-share" data-activity="${name}" data-description="${details.description}" data-schedule="${formattedSchedule}" title="Share via Email">
+            <span class="share-icon">✉️</span>
+          </button>
+          <button class="share-btn copy-link" data-activity="${name}" title="Copy link to clipboard">
+            <span class="share-icon">🔗</span>
+          </button>
+        </div>
+      </div>
       <div class="activity-card-actions">
         ${
           currentUser
@@ -578,6 +595,17 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteButtons.forEach((button) => {
       button.addEventListener("click", handleUnregister);
     });
+
+    // Add click handlers for share buttons
+    const facebookBtn = activityCard.querySelector(".facebook-share");
+    const twitterBtn = activityCard.querySelector(".twitter-share");
+    const emailBtn = activityCard.querySelector(".email-share");
+    const copyLinkBtn = activityCard.querySelector(".copy-link");
+
+    facebookBtn.addEventListener("click", handleFacebookShare);
+    twitterBtn.addEventListener("click", handleTwitterShare);
+    emailBtn.addEventListener("click", handleEmailShare);
+    copyLinkBtn.addEventListener("click", handleCopyLink);
 
     // Add click handler for register button (only when authenticated)
     if (currentUser) {
@@ -799,6 +827,85 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     );
+  }
+
+  // Social sharing functions
+  function handleFacebookShare(event) {
+    const button = event.currentTarget;
+    const activityName = button.dataset.activity;
+    const description = button.dataset.description;
+    const schedule = button.dataset.schedule;
+
+    const shareUrl = window.location.href;
+    const shareText = `Check out ${activityName} at Mergington High School! ${description} Schedule: ${schedule}`;
+
+    // Facebook Share Dialog
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      shareUrl
+    )}&quote=${encodeURIComponent(shareText)}`;
+
+    window.open(facebookUrl, "_blank", "width=600,height=400");
+  }
+
+  function handleTwitterShare(event) {
+    const button = event.currentTarget;
+    const activityName = button.dataset.activity;
+    const description = button.dataset.description;
+    const schedule = button.dataset.schedule;
+
+    const shareUrl = window.location.href;
+    const shareText = `Check out ${activityName} at Mergington High School! ${description} Schedule: ${schedule}`;
+
+    // Twitter/X Share
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      shareText
+    )}&url=${encodeURIComponent(shareUrl)}`;
+
+    window.open(twitterUrl, "_blank", "width=600,height=400");
+  }
+
+  function handleEmailShare(event) {
+    const button = event.currentTarget;
+    const activityName = button.dataset.activity;
+    const description = button.dataset.description;
+    const schedule = button.dataset.schedule;
+
+    const shareUrl = window.location.href;
+    const subject = `Join ${activityName} at Mergington High School`;
+    const body = `Hi!
+
+I wanted to share this extracurricular activity with you:
+
+Activity: ${activityName}
+Description: ${description}
+Schedule: ${schedule}
+
+Learn more and sign up here: ${shareUrl}
+
+Branch out and grow at Mergington High School!`;
+
+    // Email link
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+
+    window.location.href = mailtoUrl;
+  }
+
+  function handleCopyLink(event) {
+    const activityName = event.currentTarget.dataset.activity;
+    const shareUrl = window.location.href;
+
+    // Copy to clipboard
+    navigator.clipboard
+      .writeText(shareUrl)
+      .then(() => {
+        showMessage(`Link copied to clipboard for ${activityName}!`, "success");
+      })
+      .catch((err) => {
+        console.error("Failed to copy link:", err);
+        showMessage("Failed to copy link. Please try again.", "error");
+      });
   }
 
   // Show message function
