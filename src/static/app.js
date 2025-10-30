@@ -267,21 +267,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedDarkMode = localStorage.getItem("darkMode");
     if (savedDarkMode === "enabled") {
       enableDarkMode();
+    } else {
+      // Ensure button is in correct state even when dark mode is not enabled
+      updateDarkModeButton();
     }
   }
 
-  function enableDarkMode() {
-    document.body.classList.add("dark-mode");
-    isDarkMode = true;
-    localStorage.setItem("darkMode", "enabled");
+  function setDarkMode(enabled) {
+    document.body.classList.toggle("dark-mode", enabled);
+    isDarkMode = enabled;
+    localStorage.setItem("darkMode", enabled ? "enabled" : "disabled");
     updateDarkModeButton();
   }
 
+  function enableDarkMode() {
+    setDarkMode(true);
+  }
+
   function disableDarkMode() {
-    document.body.classList.remove("dark-mode");
-    isDarkMode = false;
-    localStorage.setItem("darkMode", "disabled");
-    updateDarkModeButton();
+    setDarkMode(false);
   }
 
   function toggleDarkMode() {
